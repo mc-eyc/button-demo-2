@@ -39,6 +39,7 @@ const StyledButton = styled.div`
         text-rendering: optimizeLegibility;
         fill: ${(props) => props.theme.color};
         font-weight: 700;
+        text-align: center;
     }
 `;
 

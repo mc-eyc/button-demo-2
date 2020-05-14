@@ -14,6 +14,9 @@ const StyledMenu = styled.div`
             content: " ]";
         }
     }
+
+    color: white;
+    font-weight: bold;
 `;
 
 const StyledSliderContainer = styled.div`
@@ -34,6 +37,7 @@ export function Menu({
     setAutoSpins,
     setFreeSpins,
     setOrientation,
+    setSide,
 }) {
     return (
         <StyledMenu>
@@ -63,6 +67,19 @@ export function Menu({
                     <label for={`orientation-${orientation}`}>{orientation}</label>
                 </>
             ))}
+            {["left", "right"].map((side) => (
+                <>
+                    <input
+                        id={`side-${side}`}
+                        type="radio"
+                        value={side}
+                        name="side"
+                        checked={state.align.side === side}
+                        onChange={(e) => setSide(e.target.value)}
+                    />
+                    <label for={`side-${side}`}>{side}</label>
+                </>
+            ))}
         </StyledMenu>
     );
 }
@@ -90,5 +107,6 @@ export default connect(
         setAutoSpins: (value) => dispatch({ type: "counters.setAutoSpins", value }),
         setFreeSpins: (value) => dispatch({ type: "counters.setFreeSpins", value }),
         setOrientation: (orientation) => dispatch({ type: "align.setOrientation", orientation }),
+        setSide: (side) => dispatch({ type: "align.setSide", side }),
     }),
 )(Menu);

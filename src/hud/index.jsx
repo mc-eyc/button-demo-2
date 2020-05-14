@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import styled, { ThemeProvider } from "styled-components";
+import styled, { css, ThemeProvider } from "styled-components";
 
 import modes from "../modes";
 import ButtonContainer from "../buttons";
@@ -16,36 +16,68 @@ import BetConfig from "../buttons/bet-config";
 import SoundConfig from "../buttons/sound-config";
 import StopSpin from "../buttons/stop-spin";
 
-const StyledHud = styled.div`
-    display: flex;
-    flex-direction: ${(props) => (props.orientation === "vertical" ? "column" : "row")};
-    margin: auto;
-    text-align: center;
-    margin: 3em 0em;
-    justify-content: center;
-    align-content: center;
+const GridHUDHorizontal = css`
+    grid-template-rows: 64px;
+    grid-template-columns:
+        auto minmax(38px, 64px) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
+        minmax(38px, 64px) auto;
+    grid-template-areas: ". side0 side1 main side2 side3 .";
+`;
+
+const GridHUDVertical = css`
+    grid-template-columns: ${(props) => (props.side === "left" ? "96px auto" : "auto 96px")};
+    grid-template-rows:
+        auto minmax(38px, 64px) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
+        minmax(38px, 64px) auto;
+    grid-template-areas: ${(props) =>
+        props.side === "left"
+            ? `"." "side0" "side1" "main" "side2" "side3" "."`
+            : `"." ". side0" ". side1" ". main" ". side2" ". side3" "."`};
+`;
+
+const StyledHUD = styled.div`
+    /* Common grid properties */
+    display: grid;
     align-items: center;
+
+    /* Choose the appropriate grid HUD orientation */
+    ${(props) => (props.orientation === "vertical" ? GridHUDVertical : GridHUDHorizontal)}
+
+    margin: 3em 0em;
     border: 1px solid blue;
-    flex-grow: 1;
-    flex-shrink: 0;
 
     .button-group {
         min-width: 38px;
         min-height: 38px;
         width: 38px;
         height: 38px;
-        flex-basis: 64px;
 
         &.main {
             min-width: 64px;
             min-height: 64px;
             width: 64px;
             height: 64px;
-            flex-basis: 96px;
         }
 
-        &.side {
-            position: absolute;
+        &:nth-child(1) {
+            grid-area: side0;
+        }
+
+        &:nth-child(2) {
+            grid-area: side1;
+        }
+
+        &:nth-child(3),
+        &:nth-child(4) {
+            grid-area: main;
+        }
+
+        &:nth-child(5) {
+            grid-area: side2;
+        }
+
+        &:nth-child(6) {
+            grid-area: side3;
         }
     }
 `;
@@ -64,7 +96,7 @@ export function HUD({
     turboSpin,
 }) {
     return (
-        <StyledHud orientation={align.orientation}>
+        <StyledHUD orientation={align.orientation} side={align.side}>
             {/* Button Theme(s) */}
             <ThemeProvider theme={theme.button}>
                 {/* Audio Button */}
@@ -146,7 +178,7 @@ export function HUD({
                     </ButtonContainer>
                 </div>
             </ThemeProvider>
-        </StyledHud>
+        </StyledHUD>
     );
 }
 
