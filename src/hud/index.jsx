@@ -32,13 +32,14 @@ const GridHUDVertical = css`
     grid-template-areas: ${(props) =>
         props.side === "left"
             ? `"." "side0" "side1" "main" "side2" "side3" "."`
-            : `"." ". side0" ". side1" ". main" ". side2" ". side3" "."`};
+            : `". ." ". side0" ". side1" ". main" ". side2" ". side3" ". ."`};
 `;
 
 const StyledHUD = styled.div`
     /* Common grid properties */
     display: grid;
     align-items: center;
+    justify-items: center;
 
     /* Choose the appropriate grid HUD orientation */
     ${(props) => (props.orientation === "vertical" ? GridHUDVertical : GridHUDHorizontal)}
