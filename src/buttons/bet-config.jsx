@@ -18,10 +18,10 @@ export default function BetConfig(props) {
     );
 }
 
-BetConfig.enter = (elem, from, to) => {
+BetConfig.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(elem, 0.5, { opacity: 0 }, { opacity: 1 });
 };
 
-BetConfig.exit = (elem, from, to, done) => {
+BetConfig.exit = (elem, align, from, to, done) => {
     return new TimelineMax().eventCallback("onComplete", done);
 };

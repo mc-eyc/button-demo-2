@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import styled from "styled-components";
 import classNames from "classnames";
 import { Transition } from "react-transition-group";
@@ -11,7 +12,7 @@ const StyledButtonContainer = styled.div`
     pointer-events: none;
 `;
 
-export default function ButtonContainer({ mode = "default", className, children }) {
+export function ButtonContainer({ mode, align, className, children }) {
     const [prevMode, setPrevMode] = useState(null);
     const [curMode, setCurMode] = useState(mode);
     const [enterTween, setEnterTween] = useState(null);
@@ -23,6 +24,8 @@ export default function ButtonContainer({ mode = "default", className, children 
             setCurMode(mode);
         }
     }, [mode, curMode]);
+
+    // TODO: When changing orientation or side find way to force new tween with correct prev and cur states
 
     return (
         <StyledButtonContainer className={classNames(className, "button-container")}>
@@ -50,6 +53,7 @@ export default function ButtonContainer({ mode = "default", className, children 
                             originalComponent,
                             prevMode,
                             curMode,
+                            align,
                         )}
                         addEndListener={ButtonContainer.onExit.bind(
                             null,
@@ -60,6 +64,7 @@ export default function ButtonContainer({ mode = "default", className, children 
                             originalComponent,
                             prevMode,
                             curMode,
+                            align,
                         )}>
                         {{ ...child, key: `btn-${name}` }}
                     </Transition>
@@ -77,6 +82,7 @@ ButtonContainer.onEnter = (
     ModeButton,
     prevMode,
     curMode,
+    align,
     elem,
 ) => {
     if (enterModes === curMode || enterModes.includes(curMode)) {
@@ -85,7 +91,7 @@ ButtonContainer.onEnter = (
             enterTween.progress(1).kill();
         }
         setEnterTween(
-            ModeButton.enter(elem, prevMode, curMode) ||
+            ModeButton.enter(elem, align, prevMode, curMode) ||
                 new TimelineMax().fromTo(elem, 0, { opacity: 0, rotate: 0, scale: 1 }, {}),
         );
     }
@@ -99,6 +105,7 @@ ButtonContainer.onExit = function(
     ModeButton,
     prevMode,
     curMode,
+    align,
     elem,
     done,
 ) {
@@ -108,10 +115,12 @@ ButtonContainer.onExit = function(
             exitTween.progress(1).kill();
         }
         setExitTween(
-            ModeButton.exit(elem, prevMode, curMode, done) ||
+            ModeButton.exit(elem, align, prevMode, curMode, done) ||
                 new TimelineMax()
                     .fromTo(elem, 0, { opacity: 0, rotate: 0, scale: 1 }, {})
                     .eventCallback("onComplete", done),
         );
     }
 };
+
+export default connect(({mode, align}) => ({ mode, align }))(ButtonContainer);

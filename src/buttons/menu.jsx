@@ -17,10 +17,10 @@ export default function Menu(props) {
     );
 }
 
-Menu.enter = (elem, from, to) => {
+Menu.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(elem, 0.5, { opacity: 0 }, { opacity: 1 });
 };
 
-Menu.exit = (elem, from, to, done) => {
+Menu.exit = (elem, align, from, to, done) => {
     return new TimelineMax().eventCallback("onComplete", done);
 };

@@ -18,11 +18,11 @@ export function SoundConfig(props) {
     );
 }
 
-SoundConfig.enter = (elem, from, to) => {
+SoundConfig.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(elem, 0.5, { opacity: 0 }, { opacity: 1 });
 };
 
-SoundConfig.exit = (elem, from, to, done) => {
+SoundConfig.exit = (elem, align, from, to, done) => {
     return new TimelineMax().eventCallback("onComplete", done);
 };
 

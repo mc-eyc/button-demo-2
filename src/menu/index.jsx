@@ -38,6 +38,7 @@ export function Menu({
     setFreeSpins,
     setOrientation,
     setSide,
+    setTitleVisible,
 }) {
     return (
         <StyledMenu>
@@ -55,7 +56,7 @@ export function Menu({
             </StyledSliderContainer>
             <h2>Alignment</h2>
             {["horizontal", "vertical"].map((orientation) => (
-                <>
+                <React.Fragment key={`orientation-${orientation}`}>
                     <input
                         id={`orientation-${orientation}`}
                         type="radio"
@@ -64,22 +65,29 @@ export function Menu({
                         checked={state.align.orientation === orientation}
                         onChange={(e) => setOrientation(e.target.value)}
                     />
-                    <label for={`orientation-${orientation}`}>{orientation}</label>
-                </>
+                    <label htmlFor={`orientation-${orientation}`}>{orientation}</label>
+                </React.Fragment>
             ))}
             {["left", "right"].map((side) => (
-                <>
+                <React.Fragment key={`side-${side}`}>
                     <input
                         id={`side-${side}`}
+                        key={`radio-side-${side}`}
                         type="radio"
                         value={side}
                         name="side"
                         checked={state.align.side === side}
                         onChange={(e) => setSide(e.target.value)}
                     />
-                    <label for={`side-${side}`}>{side}</label>
-                </>
+                    <label htmlFor={`side-${side}`}>{side}</label>
+                </React.Fragment>
             ))}
+            <input
+                type="checkbox"
+                checked={state.title.visible}
+                onChange={(e) => setTitleVisible(e.target.checked)}
+            />
+            <label htmlFor="title">Title</label>
         </StyledMenu>
     );
 }
@@ -108,5 +116,6 @@ export default connect(
         setFreeSpins: (value) => dispatch({ type: "counters.setFreeSpins", value }),
         setOrientation: (orientation) => dispatch({ type: "align.setOrientation", orientation }),
         setSide: (side) => dispatch({ type: "align.setSide", side }),
+        setTitleVisible: (visible) => dispatch({ type: "title.setVisible", visible }),
     }),
 )(Menu);

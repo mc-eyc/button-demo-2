@@ -17,10 +17,10 @@ export default function Close(props) {
     );
 }
 
-Close.enter = (elem, from, to) => {
+Close.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(elem, 0.5, { opacity: 0 }, { opacity: 1 });
 };
 
-Close.exit = (elem, from, to, done) => {
+Close.exit = (elem, align, from, to, done) => {
     return new TimelineMax().eventCallback("onComplete", done);
 };

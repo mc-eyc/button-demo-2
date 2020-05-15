@@ -18,7 +18,7 @@ export default function StopSpin(props) {
     );
 }
 
-StopSpin.enter = (element, from, to) => {
+StopSpin.enter = (element, align, from, to) => {
     if (to === modes.SlamSpinning) {
         return new TimelineMax()
             .fromTo(
@@ -27,16 +27,20 @@ StopSpin.enter = (element, from, to) => {
                 { opacity: 0, rotate: 0, scale: 0, x: 0 },
                 { ease: Elastic.easeOut, opacity: 1, scale: 1 },
             )
-            .to(element, 0.25, { ease: Back.easeOut, x: "-25%" });
+            .to(element, 0.25, {
+                ease: Back.easeOut,
+                x: align.orientation === "horizontal" ? "-25%" : 0,
+            });
     } else if (to === modes.TurboSpinning) {
+        const xOffset = (align.anchor === "bottom") ? "-100%" : (align.anchor === "left" ? "135%" : "-135%");
         return new TimelineMax()
             .delay(0.5)
-            .fromTo(element, 0.25, { x: 0 }, { ease: Back.easeOut, x: "-75%" });
+            .fromTo(element, 0.25, { x: 0 }, { ease: Back.easeOut, x: xOffset });
     } else {
         return new TimelineMax().fromTo(element, 0, { opacity: 0, rotate: 360, scale: 0 }, {});
     }
 };
 
-StopSpin.exit = (element, from, to, done) => {
+StopSpin.exit = (element, align, from, to, done) => {
     return new TimelineMax().eventCallback("onComplete", done);
 };

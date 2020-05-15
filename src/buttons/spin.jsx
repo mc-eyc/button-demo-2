@@ -13,7 +13,7 @@ export default function Spin(props) {
     return <StyledSpin {...props}><Spinner /></StyledSpin>;
 }
 
-Spin.enter = (element, from, to) => {
+Spin.enter = (element, align, from, to) => {
     if (!from) {
         return new TimelineMax().fromTo(element, 0, { opacity: 1, rotate: 0, scale: 1 }, {});
     } else if (
@@ -36,7 +36,7 @@ Spin.enter = (element, from, to) => {
     }
 };
 
-Spin.exit = (element, from, to, done) => {
+Spin.exit = (element, align, from, to, done) => {
     if (to === modes.Spinning) {
         return new TimelineMax()
             .fromTo(

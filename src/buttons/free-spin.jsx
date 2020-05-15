@@ -33,7 +33,7 @@ FreeSpin.defaultProps = {
     skin: "alt",
 };
 
-FreeSpin.enter = (elem, from, to) => {
+FreeSpin.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(
         elem,
         0.5,
@@ -42,7 +42,7 @@ FreeSpin.enter = (elem, from, to) => {
     );
 };
 
-FreeSpin.exit = (elem, from, to, done) => {
+FreeSpin.exit = (elem, align, from, to, done) => {
     if (to === modes.Spinning || to === modes.TurboSpinning || to === modes.AutoSpinning) {
         return new TimelineMax()
             .fromTo(

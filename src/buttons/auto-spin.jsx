@@ -24,7 +24,7 @@ AutoSpin.defaultProps = {
     skin: "autoSpin",
 };
 
-AutoSpin.enter = (elem, from, to) => {
+AutoSpin.enter = (elem, align, from, to) => {
     if (from === modes.Default || from === modes.AutoSpinSelected) {
         return new TimelineMax().fromTo(
             elem,
@@ -42,7 +42,7 @@ AutoSpin.enter = (elem, from, to) => {
     }
 };
 
-AutoSpin.exit = (elem, from, to, done) => {
+AutoSpin.exit = (elem, align, from, to, done) => {
     return new TimelineMax()
         .fromTo(
             elem,

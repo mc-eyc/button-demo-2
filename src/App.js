@@ -1,12 +1,11 @@
 import React from "react";
-
-import HUD from "./hud";
 import Menu from "./menu";
+import Window from "./window";
 
 export default function App() {
     return (
         <div className="App">
-            <HUD />
+            <Window width={800} height={600} x={window.innerWidth / 2 - 400} y={350} />
             <Menu
                 modes={[
                     "default",

@@ -17,10 +17,10 @@ export default function AutoSpinConfig(props) {
     );
 }
 
-AutoSpinConfig.enter = (elem, from, to) => {
+AutoSpinConfig.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(elem, 0.5, { opacity: 0 }, { opacity: 1 });
 };
 
-AutoSpinConfig.exit = (elem, from, to, done) => {
+AutoSpinConfig.exit = (elem, align, from, to, done) => {
     return new TimelineMax().eventCallback("onComplete", done);
 };

@@ -131,5 +131,5 @@ function ButtonText({ text }) {
 }
 
 ButtonText.propTypes = {
-    text: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.bool]),
+    text: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
 };

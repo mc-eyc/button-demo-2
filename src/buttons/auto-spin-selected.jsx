@@ -31,7 +31,7 @@ export function AutoSpinSelected(props) {
     );
 }
 
-AutoSpinSelected.enter = (elem, from, to) => {
+AutoSpinSelected.enter = (elem, align, from, to) => {
     return new TimelineMax().fromTo(
         elem,
         0.5,
@@ -40,7 +40,7 @@ AutoSpinSelected.enter = (elem, from, to) => {
     );
 };
 
-AutoSpinSelected.exit = (elem, from, to, done) => {
+AutoSpinSelected.exit = (elem, align, from, to, done) => {
     if (to === modes.AutoSpinning) {
         return new TimelineMax()
             .fromTo(elem, 0.5, { opacity: 1 }, { opacity: 0 })

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import styled, { css, ThemeProvider } from "styled-components";
 
@@ -17,17 +17,22 @@ import SoundConfig from "../buttons/sound-config";
 import StopSpin from "../buttons/stop-spin";
 
 const GridHUDHorizontal = css`
-    grid-template-rows: 64px;
+    /* Horizontal only allows bottom anchor point */
+    grid-template-rows: auto 64px;
     grid-template-columns:
         auto minmax(38px, 64px) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
         minmax(38px, 64px) auto;
-    grid-template-areas: ". side0 side1 main side2 side3 .";
+    grid-template-areas: ". . . . . . ." ". side0 side1 main side2 side3 .";
 `;
 
 const GridHUDVertical = css`
     grid-template-columns: ${(props) => (props.side === "left" ? "96px auto" : "auto 96px")};
+    /* TODO: 1fr if under a certain height otherwise 64px if over that height, otherwise they don't shrink / grow properly */
     grid-template-rows:
-        auto minmax(38px, 64px) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
+        auto minmax(
+            ${(props) => (props.height && props.height >= 352 ? "38px" : "1fr")},
+            64px
+        ) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
         minmax(38px, 64px) auto;
     grid-template-areas: ${(props) =>
         props.side === "left"
@@ -35,8 +40,25 @@ const GridHUDVertical = css`
             : `". ." ". side0" ". side1" ". main" ". side2" ". side3" ". ."`};
 `;
 
+// If the offset value is a number then convert it to pixels otherwise leave as string
+const safeOffset = (v) => (typeof v === "number" ? `${v}px` : v);
+
+const padding = css`
+    padding-top: 0px;
+    padding-right: ${(props) =>
+        props.anchor === "right" ? safeOffset(props.offset.right) : "0px"};
+    padding-left: ${(props) => (props.anchor === "left" ? safeOffset(props.offset.left) : "0px")};
+
+    > .button-group {
+        padding-bottom: ${(props) =>
+            props.anchor === "bottom" ? safeOffset(props.offset.bottom) : "0px"};
+    }
+`;
+
 const StyledHUD = styled.div`
     /* Common grid properties */
+    width: 100%;
+    height: 100%;
     display: grid;
     align-items: center;
     justify-items: center;
@@ -44,18 +66,14 @@ const StyledHUD = styled.div`
     /* Choose the appropriate grid HUD orientation */
     ${(props) => (props.orientation === "vertical" ? GridHUDVertical : GridHUDHorizontal)}
 
-    margin: 3em 0em;
-    border: 1px solid blue;
+    /* Padding by anchor and offset - match the anchor to the offset */
+    ${padding}
 
     .button-group {
-        min-width: 38px;
-        min-height: 38px;
         width: 38px;
         height: 38px;
 
         &.main {
-            min-width: 64px;
-            min-height: 64px;
             width: 64px;
             height: 64px;
         }
@@ -96,8 +114,27 @@ export function HUD({
     autoSpin,
     turboSpin,
 }) {
+    const hudRef = useRef(null);
+    const [hudHeight, setHudHeight] = useState(0);
+
+    // TODO: useResizeObserver
+    useEffect(() => {
+        if (hudRef.current) {
+            setHudHeight(hudRef.current.getBoundingClientRect().height);
+        } else {
+            setHudHeight(0);
+        }
+    }, [hudRef]);
+
     return (
-        <StyledHUD orientation={align.orientation} side={align.side}>
+        <StyledHUD
+            className="hud"
+            orientation={align.orientation}
+            side={align.side}
+            anchor={align.anchor}
+            offset={align.offset}
+            height={hudHeight}
+            ref={hudRef}>
             {/* Button Theme(s) */}
             <ThemeProvider theme={theme.button}>
                 {/* Audio Button */}
@@ -147,7 +184,7 @@ export function HUD({
                         <StopSpin on={modes.SlamSpinning} onClick={goToDefault} />
                         <TurboSpin on={modes.TurboSpinning} />
                         <AutoSpinSelected onClick={autoSpin} on={modes.AutoSpinSelected} />
-                        <AutoSpin on={modes.AutoSpinning} />
+                        <AutoSpin on={modes.AutoSpinning} onClick={goToDefault} />
                         <FreeSpin on={modes.FreeSpinning} />
                     </ButtonContainer>
                 </div>
