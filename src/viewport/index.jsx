@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Title from "./title";
 import HUD from "../hud";
 import Balances from "./balances";
+import ExtraButtons from "../buttons/extras";
 
 const StyledViewport = styled.div`
     display: grid;
@@ -24,14 +25,15 @@ const StyledViewport = styled.div`
     }
 `;
 
-export function Viewport({ titleVisible }) {
+export function Viewport({ titleVisible, extraButtons }) {
     return (
         <StyledViewport className="viewport" titleVisible={titleVisible}>
             {titleVisible && <Title />}
+            {extraButtons.length ? <ExtraButtons /> : null}
             <HUD />
             <Balances />
         </StyledViewport>
     );
 }
 
-export default connect(({ title }) => ({ titleVisible: title.visible }))(Viewport);
+export default connect(({ title, extraButtons }) => ({ titleVisible: title.visible, extraButtons }))(Viewport);

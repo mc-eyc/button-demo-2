@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import useDeepEffect from "use-deep-compare-effect";
 import styled from "styled-components";
 import classNames from "classnames";
 import { Transition } from "react-transition-group";
@@ -18,7 +19,7 @@ export function ButtonContainer({ mode, align, className, children }) {
     const [enterTween, setEnterTween] = useState(null);
     const [exitTween, setExitTween] = useState(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (curMode !== mode) {
             setPrevMode(curMode);
             setCurMode(mode);
@@ -26,11 +27,18 @@ export function ButtonContainer({ mode, align, className, children }) {
     }, [mode, curMode]);
 
     // TODO: When changing orientation or side find way to force new tween with correct prev and cur states
+    useDeepEffect(() => {
+        if (enterTween) {
+            // TODO: Replay the enter tween with the correct alignment by either playing
+            // or progressing to end. The current tween though will be filled with incorrect
+            // data ergo we need to re-render everything?
+        }
+    }, [align]);
 
     return (
         <StyledButtonContainer className={classNames(className, "button-container")}>
-            {/* Render all child buttons as transitions, for some reason React.Children.map isn't working */}
-            {children && [].concat(children).map((child) => {
+            {/* Render all child buttons as transitions */}
+            {React.Children.map(children, (child) => {
                 const originalComponent = child.type?.WrappedComponent || child.type;
                 const name = originalComponent.name;
                 const active =

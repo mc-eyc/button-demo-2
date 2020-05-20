@@ -1,8 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import styled, { css, ThemeProvider } from "styled-components";
+import useResizeObserver from "use-resize-observer";
 
 import modes from "../modes";
+import ExtraButtons from "../buttons/extras";
 import ButtonContainer from "../buttons";
 import Spin from "../buttons/spin";
 import TurboSpin from "../buttons/turbo-spin";
@@ -18,21 +20,19 @@ import StopSpin from "../buttons/stop-spin";
 
 const GridHUDHorizontal = css`
     /* Horizontal only allows bottom anchor point */
-    grid-template-rows: auto 64px;
+    grid-template-rows: 32px auto 64px;
     grid-template-columns:
         auto minmax(38px, 64px) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
         minmax(38px, 64px) auto;
-    grid-template-areas: ". . . . . . ." ". side0 side1 main side2 side3 .";
+    grid-template-areas: "extra extra extra extra extra extra extra" ". . . . . . ." ". side0 side1 main side2 side3 .";
 `;
 
 const GridHUDVertical = css`
     grid-template-columns: ${(props) => (props.side === "left" ? "96px auto" : "auto 96px")};
     /* TODO: 1fr if under a certain height otherwise 64px if over that height, otherwise they don't shrink / grow properly */
     grid-template-rows:
-        auto minmax(
-            ${(props) => (props.height && props.height >= 352 ? "38px" : "1fr")},
-            64px
-        ) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
+        auto minmax(${(props) => (props.height > 352 ? "38px" : "1fr")}, 64px)
+        minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
         minmax(38px, 64px) auto;
     grid-template-areas: ${(props) =>
         props.side === "left"
@@ -78,27 +78,26 @@ const StyledHUD = styled.div`
             height: 64px;
         }
 
-        &:nth-child(1) {
+        &.side0 {
             grid-area: side0;
         }
 
-        &:nth-child(2) {
+        &.side1 {
             grid-area: side1;
         }
 
-        &:nth-child(3),
-        &:nth-child(4) {
+        &.slide, &.main {
             grid-area: main;
         }
 
-        &:nth-child(5) {
+        &.side2 {
             grid-area: side2;
         }
 
-        &:nth-child(6) {
+        &.side3 {
             grid-area: side3;
         }
-    }
+}
 `;
 
 export function HUD({
@@ -114,17 +113,14 @@ export function HUD({
     autoSpin,
     turboSpin,
 }) {
-    const hudRef = useRef(null);
+    // When resizing, update the HUD height to reflect whether or not the grid should expand to a maximum
+    // size or contract accordingly as small as possible.
     const [hudHeight, setHudHeight] = useState(0);
-
-    // TODO: useResizeObserver
-    useEffect(() => {
-        if (hudRef.current) {
-            setHudHeight(hudRef.current.getBoundingClientRect().height);
-        } else {
-            setHudHeight(0);
-        }
-    }, [hudRef]);
+    const { ref } = useResizeObserver({
+        onResize: ({ height }) => {
+            setHudHeight(height);
+        },
+    });
 
     return (
         <StyledHUD
@@ -134,11 +130,11 @@ export function HUD({
             anchor={align.anchor}
             offset={align.offset}
             height={hudHeight}
-            ref={hudRef}>
+            ref={ref}>
             {/* Button Theme(s) */}
             <ThemeProvider theme={theme.button}>
                 {/* Audio Button */}
-                <div className="button-group">
+                <div className="button-group side0">
                     <ButtonContainer mode={mode}>
                         <SoundConfig
                             onClick={toggleMute}
@@ -153,7 +149,7 @@ export function HUD({
                 </div>
 
                 {/* Autoplay Config Button */}
-                <div className="button-group">
+                <div className="button-group side1">
                     <ButtonContainer mode={mode}>
                         <AutoSpinConfig
                             onClick={goToAutoSpinConfig}
@@ -166,8 +162,8 @@ export function HUD({
                     </ButtonContainer>
                 </div>
 
-                {/* Optional Extra Button */}
-                <div className="button-group side">
+                {/* Optional Side Buttons */}
+                <div className="button-group slide">
                     <ButtonContainer mode={mode}>
                         <TurboSpin on={modes.SlamSpinning} onClick={turboSpin} />
                         <StopSpin on={modes.TurboSpinning} onClick={goToDefault} />
@@ -190,7 +186,7 @@ export function HUD({
                 </div>
 
                 {/* Bet Config Button */}
-                <div className="button-group">
+                <div className="button-group side2">
                     <ButtonContainer mode={mode}>
                         <BetConfig
                             onClick={goToBetConfig}
@@ -201,7 +197,7 @@ export function HUD({
                 </div>
 
                 {/* Menu Button */}
-                <div className="button-group">
+                <div className="button-group side3">
                     <ButtonContainer mode={mode}>
                         <Menu
                             onClick={goToMenu}
