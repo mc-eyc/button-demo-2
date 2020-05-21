@@ -20,40 +20,27 @@ import StopSpin from "../buttons/stop-spin";
 
 const GridHUDHorizontal = css`
     /* Horizontal only allows bottom anchor point */
-    grid-template-rows: 32px auto 64px;
+    grid-template-rows: auto 64px;
     grid-template-columns:
         auto minmax(38px, 64px) minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
         minmax(38px, 64px) auto;
-    grid-template-areas: "extra extra extra extra extra extra extra" ". . . . . . ." ". side0 side1 main side2 side3 .";
+    grid-template-areas: ". . . . . . ." ". side0 side1 main side2 side3 .";
 `;
 
 const GridHUDVertical = css`
-    grid-template-columns: ${(props) => (props.side === "left" ? "96px auto" : "auto 96px")};
-    /* TODO: 1fr if under a certain height otherwise 64px if over that height, otherwise they don't shrink / grow properly */
+    grid-template-columns: ${props => (props.side === "left" ? "64px auto" : "auto 64px")};
     grid-template-rows:
-        auto minmax(${(props) => (props.height > 352 ? "38px" : "1fr")}, 64px)
-        minmax(38px, 64px) minmax(64px, 96px) minmax(38px, 64px)
-        minmax(38px, 64px) auto;
-    grid-template-areas: ${(props) =>
+        auto minmax(8px, 64px)
+        minmax(8px, 64px) minmax(13.5px, 96px) minmax(8px, 64px)
+        minmax(8px, 64px) auto;
+    grid-template-areas: ${props =>
         props.side === "left"
             ? `"." "side0" "side1" "main" "side2" "side3" "."`
             : `". ." ". side0" ". side1" ". main" ". side2" ". side3" ". ."`};
 `;
 
 // If the offset value is a number then convert it to pixels otherwise leave as string
-const safeOffset = (v) => (typeof v === "number" ? `${v}px` : v);
-
-const padding = css`
-    padding-top: 0px;
-    padding-right: ${(props) =>
-        props.anchor === "right" ? safeOffset(props.offset.right) : "0px"};
-    padding-left: ${(props) => (props.anchor === "left" ? safeOffset(props.offset.left) : "0px")};
-
-    > .button-group {
-        padding-bottom: ${(props) =>
-            props.anchor === "bottom" ? safeOffset(props.offset.bottom) : "0px"};
-    }
-`;
+const safeOffset = v => (typeof v === "number" ? `${v}px` : v);
 
 const StyledHUD = styled.div`
     /* Common grid properties */
@@ -62,20 +49,28 @@ const StyledHUD = styled.div`
     display: grid;
     align-items: center;
     justify-items: center;
+    overflow: hidden;
 
     /* Choose the appropriate grid HUD orientation */
-    ${(props) => (props.orientation === "vertical" ? GridHUDVertical : GridHUDHorizontal)}
+    ${props => (props.orientation === "vertical" ? GridHUDVertical : GridHUDHorizontal)}
 
-    /* Padding by anchor and offset - match the anchor to the offset */
-    ${padding}
+    > .button-group {
+        /* Margin by anchor and offset - match the anchor to the offset */
+        margin-top: ${props => (props.anchor === "top" ? safeOffset(props.offset.top) : "0px")};
+        margin-right: ${props =>
+            props.anchor === "right" ? safeOffset(props.offset.right) : "0px"};
+        margin-bottom: ${props =>
+            props.anchor === "bottom" ? safeOffset(props.offset.bottom) : "0px"};
+        margin-left: ${props => (props.anchor === "left" ? safeOffset(props.offset.left) : "0px")};
 
-    .button-group {
-        width: 38px;
-        height: 38px;
+        max-width: 38px;
+        max-height: 38px;
+        width: 100%;
+        height: 100%;
 
         &.main {
-            width: 64px;
-            height: 64px;
+            max-width: 64px;
+            max-height: 64px;
         }
 
         &.side0 {
@@ -86,7 +81,8 @@ const StyledHUD = styled.div`
             grid-area: side1;
         }
 
-        &.slide, &.main {
+        &.slide,
+        &.main {
             grid-area: main;
         }
 
@@ -97,7 +93,7 @@ const StyledHUD = styled.div`
         &.side3 {
             grid-area: side3;
         }
-}
+    }
 `;
 
 export function HUD({
@@ -218,7 +214,7 @@ export function HUD({
 
 export default connect(
     ({ mode, align, theme }) => ({ mode, align, theme }),
-    (dispatch) => ({
+    dispatch => ({
         toggleMute: () => dispatch({ type: "audio.toggleMute" }),
         goToDefault: () => dispatch({ type: "mode.set", mode: modes.Default }),
         goToAutoSpinConfig: () => dispatch({ type: "mode.set", mode: modes.AutoSpinPreSelection }),

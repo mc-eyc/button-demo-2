@@ -8,6 +8,7 @@ import App from "./App";
 
 gsap.globalTimeline.timeScale(1);
 const store = createStore();
+store.dispatch({type: "extraButtons.insert", id: "home", action: () => console.log("clicked home") });
 console.log(store.getState());
 const rootElement = document.getElementById("root");
 ReactDOM.render(

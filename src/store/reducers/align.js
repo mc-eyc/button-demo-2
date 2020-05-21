@@ -2,7 +2,7 @@ export default function(
     state = {
         orientation: "horizontal",
         side: "right",
-        offset: { top: 0, right: 0, bottom: 16, left: 0 },
+        offset: { top: 0, right: 16, bottom: 16, left: 16 },
         anchor: "bottom",
     },
     action,
