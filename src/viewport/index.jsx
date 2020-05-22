@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Title from "./title";
 import HUD from "../hud";
 import Balances from "./balances";
+import Clock from "./clock";
 import ExtraButtons from "../buttons/extras";
 
 const StyledViewport = styled.div`
@@ -25,15 +26,16 @@ const StyledViewport = styled.div`
     }
 `;
 
-export function Viewport({ titleVisible, extraButtons }) {
+export function Viewport({ titleVisible, extraButtons, clockEnabled }) {
     return (
         <StyledViewport className="viewport" titleVisible={titleVisible}>
             {titleVisible && <Title />}
             {extraButtons.length ? <ExtraButtons /> : null}
+            {clockEnabled && <Clock />}
             <HUD />
             <Balances />
         </StyledViewport>
     );
 }
 
-export default connect(({ title, extraButtons }) => ({ titleVisible: title.visible, extraButtons }))(Viewport);
+export default connect(({ title, extraButtons, clock }) => ({ titleVisible: title.visible, extraButtons, clockEnabled: clock.enabled }))(Viewport);

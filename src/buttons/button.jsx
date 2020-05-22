@@ -18,32 +18,50 @@ const StyledButton = styled.div`
         // The body encompasses the *actual* clickable area we want
         pointer-events: all;
         // Fill with a gradient if appropriate
-        fill: ${(props) =>
+        fill: ${props =>
             props.theme.background.includes("gradient")
                 ? "url(#button-body-gradient)"
                 : props.theme.background};
     }
 
     .border {
-        stroke: ${(props) => props.theme.border};
+        stroke: ${props => props.theme.border};
         stroke-width: 3px;
         fill: none;
     }
 
     .decoration {
-        fill: ${(props) => props.theme.decoration || props.theme.color};
-        stroke: ${(props) => props.theme.decoration || props.theme.color};
+        fill: ${props => props.theme.decoration || props.theme.color};
+        stroke: ${props => props.theme.decoration || props.theme.color};
     }
 
     .text {
         text-rendering: optimizeLegibility;
-        fill: ${(props) => props.theme.color};
+        fill: ${props => props.theme.color};
         font-weight: 700;
         text-align: center;
     }
 `;
 
-export default function Button({ text, skin, onClick, enabled, className, children }) {
+const StyledWing = styled.svg`
+    position: absolute;
+
+    .body {
+        fill: ${props => props.theme.background};
+    }
+`;
+
+export default function Button({
+    text,
+    skin,
+    onClick,
+    enabled,
+    wing,
+    wingAction,
+    wingDirection,
+    className,
+    children,
+}) {
     // Extract the theme from the ThemeProvider, this couples to implementations with a theme and theme provider
     const buttonThemes = useContext(ThemeContext);
 
@@ -61,7 +79,7 @@ export default function Button({ text, skin, onClick, enabled, className, childr
 
     // Whether or not there is text to render, this should probably be a reducer but it's only because
     // we may want to render potentially falsy values like 0
-    const [hasText, setHasText] = useState(false);
+    const [hasText, setHasText] = useState(text !== null && typeof text !== "undefined");
 
     useEffect(() => {
         setHasText(text !== null && typeof text !== "undefined");
@@ -70,6 +88,18 @@ export default function Button({ text, skin, onClick, enabled, className, childr
     // TODO: Support aria names?
     return (
         <StyledButton className={classNames(className, "button")} theme={theme} onClick={onClick}>
+            {wing && (
+                <StyledWing
+                    viewBox="0 0 64 32"
+                    width="100%"
+                    height="50%"
+                    theme={buttonThemes.default}>
+                    <g>
+                        <rect className="body" width="100%" height="100%" />
+                    </g>
+                    <g>{React.createElement(wing)}</g>
+                </StyledWing>
+            )}
             <svg viewBox="0 0 64 64" width="100%" height="100%">
                 <ButtonDefs theme={theme} />
                 <ButtonBody />
@@ -87,6 +117,9 @@ Button.propTypes = {
     on: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
     align: PropTypes.oneOf(["top", "right", "bottom", "left", "center"]),
     skin: PropTypes.string.isRequired,
+    wing: PropTypes.func,
+    wingDirection: PropTypes.oneOf(["left", "right"]),
+    wingAction: PropTypes.func,
 };
 
 Button.defaultProps = {
@@ -94,6 +127,7 @@ Button.defaultProps = {
     on: [],
     align: "center",
     skin: "default",
+    wingDirection: "right",
 };
 
 function ButtonDefs({ theme }) {

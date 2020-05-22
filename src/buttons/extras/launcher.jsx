@@ -13,15 +13,15 @@ const StyledExtraLauncher = styled.svg`
     z-index: 1;
 
     .body {
-        fill: ${(props) => props.theme.background};
+        fill: ${props => props.theme.background};
     }
 
     .expander {
-        fill: ${(props) => props.theme.color};
+        fill: ${props => props.theme.color};
     }
 `;
 
-export default function ExtraLauncher({ expanded, onClick }) {
+export default function ExtraLauncher({ expanded, direction, onClick }) {
     const theme = useContext(ThemeContext);
     const ref = useRef(null);
     const [tween, setTween] = useState(null);
@@ -34,12 +34,12 @@ export default function ExtraLauncher({ expanded, onClick }) {
             setTween(
                 new TimelineMax().to(ref.current, 0.25, {
                     ease: Back.easeOut,
-                    rotation: expanded ? 0 : -45,
+                    rotation: expanded ? 0 : direction === "left" ? 45 : -45,
                     transformOrigin: "50% 50%",
                 }),
             );
         }
-    }, [expanded, ref]);
+    }, [expanded, ref, direction]);
 
     return (
         <StyledExtraLauncher theme={theme} viewBox="0 0 24 24" onClick={onClick}>

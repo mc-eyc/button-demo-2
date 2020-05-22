@@ -1,6 +1,7 @@
 import align from "./align";
 import audio from "./audio";
 import balances from "./balances";
+import clock from "./clock";
 import counters from "./counters";
 import extraButtons from "./extra-buttons";
 import mode from "./mode";
@@ -11,6 +12,7 @@ export default {
     align,
     audio,
     balances,
+    clock,
     counters,
     extraButtons,
     mode,

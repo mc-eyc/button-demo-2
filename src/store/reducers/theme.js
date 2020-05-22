@@ -26,7 +26,7 @@ const defaultState = {
         autoSpin: {
             decoration: "white",
             color: "black",
-        }
+        },
     },
     // Balance themes
     balance: {
@@ -41,8 +41,10 @@ const defaultState = {
     },
     // Clock
     clock: {
-        color: "white",
+        color: "black",
         fontFamily: "Open Sans",
+        fontSize: "0.6em",
+        fontWeight: "bold",
     },
     // Border
     border: {

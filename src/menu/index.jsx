@@ -39,11 +39,12 @@ export function Menu({
     setOrientation,
     setSide,
     setTitleVisible,
+    setClockEnabled,
 }) {
     return (
         <StyledMenu>
             <h2>Modes</h2>
-            {Object.values(modes).map((mode) => (
+            {Object.values(modes).map(mode => (
                 <button key={mode} onClick={() => setMode(mode)}>
                     {mode}
                 </button>
@@ -55,7 +56,7 @@ export function Menu({
                 <CounterSlider title="Free Spins" setter={setFreeSpins} />
             </StyledSliderContainer>
             <h2>Alignment</h2>
-            {["horizontal", "vertical"].map((orientation) => (
+            {["horizontal", "vertical"].map(orientation => (
                 <React.Fragment key={`orientation-${orientation}`}>
                     <input
                         id={`orientation-${orientation}`}
@@ -63,12 +64,12 @@ export function Menu({
                         value={orientation}
                         name="orientation"
                         checked={state.align.orientation === orientation}
-                        onChange={(e) => setOrientation(e.target.value)}
+                        onChange={e => setOrientation(e.target.value)}
                     />
                     <label htmlFor={`orientation-${orientation}`}>{orientation}</label>
                 </React.Fragment>
             ))}
-            {["left", "right"].map((side) => (
+            {["left", "right"].map(side => (
                 <React.Fragment key={`side-${side}`}>
                     <input
                         id={`side-${side}`}
@@ -77,7 +78,7 @@ export function Menu({
                         value={side}
                         name="side"
                         checked={state.align.side === side}
-                        onChange={(e) => setSide(e.target.value)}
+                        onChange={e => setSide(e.target.value)}
                     />
                     <label htmlFor={`side-${side}`}>{side}</label>
                 </React.Fragment>
@@ -85,9 +86,15 @@ export function Menu({
             <input
                 type="checkbox"
                 checked={state.title.visible}
-                onChange={(e) => setTitleVisible(e.target.checked)}
+                onChange={e => setTitleVisible(e.target.checked)}
             />
             <label htmlFor="title">Title</label>
+            <input
+                type="checkbox"
+                checked={state.clock.enabled}
+                onChange={e => setClockEnabled(e.target.checked)}
+            />
+            <label htmlFor="clock">Clock</label>
         </StyledMenu>
     );
 }
@@ -101,21 +108,22 @@ function CounterSlider({ title, setter }) {
                 defaultValue={0}
                 min={0}
                 max={999}
-                onChange={(e) => setter(e.target.value)}
+                onChange={e => setter(e.target.value)}
             />
         </div>
     );
 }
 
 export default connect(
-    (state) => ({ state }),
-    (dispatch) => ({
-        setMode: (mode) => dispatch({ type: "mode.set", mode }),
-        setAutoSpinsSelected: (value) => dispatch({ type: "counters.setAutoSpinsSelected", value }),
-        setAutoSpins: (value) => dispatch({ type: "counters.setAutoSpins", value }),
-        setFreeSpins: (value) => dispatch({ type: "counters.setFreeSpins", value }),
-        setOrientation: (orientation) => dispatch({ type: "align.setOrientation", orientation }),
-        setSide: (side) => dispatch({ type: "align.setSide", side }),
-        setTitleVisible: (visible) => dispatch({ type: "title.setVisible", visible }),
+    state => ({ state }),
+    dispatch => ({
+        setMode: mode => dispatch({ type: "mode.set", mode }),
+        setAutoSpinsSelected: value => dispatch({ type: "counters.setAutoSpinsSelected", value }),
+        setAutoSpins: value => dispatch({ type: "counters.setAutoSpins", value }),
+        setFreeSpins: value => dispatch({ type: "counters.setFreeSpins", value }),
+        setOrientation: orientation => dispatch({ type: "align.setOrientation", orientation }),
+        setSide: side => dispatch({ type: "align.setSide", side }),
+        setTitleVisible: visible => dispatch({ type: "title.setVisible", visible }),
+        setClockEnabled: enabled => dispatch({ type: "clock.setEnabled", enabled }),
     }),
 )(Menu);

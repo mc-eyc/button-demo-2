@@ -38,7 +38,7 @@ export function ButtonContainer({ mode, align, className, children }) {
     return (
         <StyledButtonContainer className={classNames(className, "button-container")}>
             {/* Render all child buttons as transitions */}
-            {React.Children.map(children, (child) => {
+            {React.Children.map(children, child => {
                 const originalComponent = child.type?.WrappedComponent || child.type;
                 const name = originalComponent.name;
                 const active =
@@ -58,6 +58,7 @@ export function ButtonContainer({ mode, align, className, children }) {
                             child.props.on || [],
                             enterTween,
                             setEnterTween,
+                            null,
                             originalComponent,
                             prevMode,
                             curMode,
@@ -87,6 +88,7 @@ ButtonContainer.onEnter = (
     enterModes,
     enterTween,
     setEnterTween,
+    enterTweenDone,
     ModeButton,
     prevMode,
     curMode,
@@ -99,8 +101,10 @@ ButtonContainer.onEnter = (
             enterTween.progress(1).kill();
         }
         setEnterTween(
-            ModeButton.enter(elem, align, prevMode, curMode) ||
-                new TimelineMax().fromTo(elem, 0, { opacity: 0, rotate: 0, scale: 1 }, {}),
+            (
+                ModeButton.enter(elem, align, prevMode, curMode) ||
+                new TimelineMax().fromTo(elem, 0, { opacity: 0, rotate: 0, scale: 1 }, {})
+            ).eventCallback("onComplete", enterTweenDone || (() => console.log("enter tween done"))),
         );
     }
 };
@@ -131,4 +135,4 @@ ButtonContainer.onExit = function(
     }
 };
 
-export default connect(({mode, align}) => ({ mode, align }))(ButtonContainer);
+export default connect(({ mode, align }) => ({ mode, align }))(ButtonContainer);

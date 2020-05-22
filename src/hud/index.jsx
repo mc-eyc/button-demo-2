@@ -4,7 +4,6 @@ import styled, { css, ThemeProvider } from "styled-components";
 import useResizeObserver from "use-resize-observer";
 
 import modes from "../modes";
-import ExtraButtons from "../buttons/extras";
 import ButtonContainer from "../buttons";
 import Spin from "../buttons/spin";
 import TurboSpin from "../buttons/turbo-spin";
@@ -17,6 +16,8 @@ import AutoSpinConfig from "../buttons/auto-spin-config";
 import BetConfig from "../buttons/bet-config";
 import SoundConfig from "../buttons/sound-config";
 import StopSpin from "../buttons/stop-spin";
+import Stopper from "../buttons/decorations/stopper";
+import Lightning from "../buttons/decorations/lightning";
 
 const GridHUDHorizontal = css`
     /* Horizontal only allows bottom anchor point */
@@ -28,7 +29,8 @@ const GridHUDHorizontal = css`
 `;
 
 const GridHUDVertical = css`
-    grid-template-columns: ${props => (props.side === "left" ? "64px auto" : "auto 64px")};
+    grid-template-columns: ${props =>
+        props.side === "left" ? "64px auto" : "auto minmax(8px, 64px)"};
     grid-template-rows:
         auto minmax(8px, 64px)
         minmax(8px, 64px) minmax(13.5px, 96px) minmax(8px, 64px)
@@ -158,14 +160,6 @@ export function HUD({
                     </ButtonContainer>
                 </div>
 
-                {/* Optional Side Buttons */}
-                <div className="button-group slide">
-                    <ButtonContainer mode={mode}>
-                        <TurboSpin on={modes.SlamSpinning} onClick={turboSpin} />
-                        <StopSpin on={modes.TurboSpinning} onClick={goToDefault} />
-                    </ButtonContainer>
-                </div>
-
                 {/* Spin Button */}
                 <div className="button-group main">
                     <ButtonContainer mode={mode}>
@@ -173,8 +167,8 @@ export function HUD({
                             onClick={spin}
                             on={[modes.Default, modes.AutoSpinPreSelection, modes.BetConfiguring]}
                         />
-                        <StopSpin on={modes.SlamSpinning} onClick={goToDefault} />
-                        <TurboSpin on={modes.TurboSpinning} />
+                        <StopSpin on={modes.SlamSpinning} onClick={goToDefault} wing={Lightning} />
+                        <TurboSpin on={modes.TurboSpinning} wing={Stopper} />
                         <AutoSpinSelected onClick={autoSpin} on={modes.AutoSpinSelected} />
                         <AutoSpin on={modes.AutoSpinning} onClick={goToDefault} />
                         <FreeSpin on={modes.FreeSpinning} />
